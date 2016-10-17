@@ -1,0 +1,18 @@
+{
+  "name": "haoleecms",
+  "version": "1.0.0",
+  "description": "haolee's cms",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "haolee",
+    "cms"
+  ],
+  "author": "haolee",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.14.0"
+  }
+}
