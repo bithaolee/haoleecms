@@ -1,16 +1,17 @@
 var express = require('express');
 var router = express.Router();
-
-router.use();
+var index = require('./controller/index');
+var user = require('./controller/user');
 
 // user login logic
-app.all('/admin', function (req, res, next) {
-    // login logic
+router.all('*', function (req, res, next) {
+    // console.log('authentification');
     next();
 });
 
-app.get('/', function (req, res) {
-    res.status(200).send('congratulation');
-});
 
+router.get('/login', user.login);
+router.get('/', index.dashboard);
+
+module.exports = router;
 

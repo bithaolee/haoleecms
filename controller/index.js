@@ -1,7 +1,6 @@
 var index = {
-    index: {
-        get: function () {},
-        post: function () {}
+    dashboard: function (req, res) {
+        res.send('index page');
     },
 };
 

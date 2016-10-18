@@ -1,31 +1,11 @@
 var user = {
-    login: {
-        get: function () {
-            // render login page
-
-        },
-        post: function () {},
+    login: function (req, res) {
+        res.render('user/login', {name: 'haolee'});
     },
-    lists: {
-        get: function () {
-
-        },
-        post: function () {
-
-        },
-    },
-    add: {
-        get: function () {},
-        post: function () {},
-    },
-    edit: {
-        get: function () {},
-        post: function () {},
-    },
-    delete: {
-        get: function () {},
-        post: function () {}
-    }
+    lists: function () {},
+    add: function () {},
+    edit: function () {},
+    delete: function () {}
 };
 
 module.exports = user;
