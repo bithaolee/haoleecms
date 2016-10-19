@@ -5,7 +5,6 @@ var user = require('./controller/user');
 
 // user login logic
 router.all('*', function (req, res, next) {
-    // console.log('authentification');
     next();
 });
 

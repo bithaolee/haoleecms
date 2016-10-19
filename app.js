@@ -5,6 +5,9 @@ var nunjucks = require('nunjucks');
 // var db = require('./db');
 var app = express();
 
+app.get('/', function (req, res) {
+    res.redirect('/admin/login');
+});
 // mount a router map
 app.use('/admin', router);
 
