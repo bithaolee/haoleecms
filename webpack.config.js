@@ -48,6 +48,8 @@ module.exports = {
         extensions: ['', '.js', '.css', '.json', '.coffee', '.jsx'],
         alias: {
             jquery: libsDir + "/jQuery/jquery-2.2.3.min.js",
+            blockui: libsDir + "/jQueryBlockUI/jquery.blockui.min.js",
+            jqueryform: libsDir + "/jQueryForm/jquery.form.min.js",
         }
     },
     externals: {}, // 定义外部引用的资源，可以直接使用

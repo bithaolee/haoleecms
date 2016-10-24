@@ -45,8 +45,12 @@ app.use(function (err, req, res, next) {
     }
 });
 
-var server = app.listen(config.port, function () {
-    var address = server.address();
+var server = app.listen(config.port, function (err) {
+    if (err) {
+        console.log('error');
+    } else {
+        var address = server.address();
 
-    console.log('app listening at http://%s:%s', address.host, address.port);
+        console.log('app listening at http://%s:%s', address.host, address.port);
+    }
 });

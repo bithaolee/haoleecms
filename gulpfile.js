@@ -1,37 +1,28 @@
 var gulp = require('gulp');
+var md5 = require('gulp-md5-assets');
+var concat = require('gulp-concat');
+var uglify = require('gulp-uglify');
+var exec = require('child_process').exec;
 var less = require('gulp-less');
-// var os = require('os');
-// var gutil = require('gulp-util');
-// var concat = require('gulp-concat');
-// var gulpOpen = require('gulp-open');
-// var uglify = require('gulp-uglify');
 var cssmin = require('gulp-cssmin');
-var md5 = require('gulp-md5-plus');
-// var fileinclude = require('gulp-file-include');
-// var clean = require('gulp-clean');
-// var webpack = require('webpack');
-// var webpackConfig = require('./webpack.config.js');
-// var connect = require('gulp-connect');
 
-// var host = {
-//     path: 'dist/',
-//     port: 3000,
-//     html: 'index.html'
-// };
+gulp.task('webpack', function () {
+    exec('webpack -w');
+});
 
-// minify css & md5 css path for html
+gulp.task('js', ['webpack'], function () {
+    return gulp.src('public/dist/js/**/*.js')
+               .pipe(uglify())
+               .pipe(md5(5, 'views/**/*.html'))
+               .pipe(gulp.dest('public/dist/js/'));
+});
+
 gulp.task('css', function (done) {
-    gulp.src(['public/source/css/**/*.css', 'public/source/css/**/*.less'])
-        .pipe(less())
-        .pipe(cssmin())
-        .pipe(md5(5, 'view/**/*.html'))
-        .pipe(gulp.dest('public/dist/css/'))
-        .on('end', done);
+    return gulp.src(['public/source/css/**/*.css', 'public/source/css/**/*.less'], {base: 'public'})
+               .pipe(less())
+               .pipe(cssmin())
+               .pipe(md5(5, 'views/**/*.html'))
+               .pipe(gulp.dest('public/dist/css/'));
 });
 
-gulp.task('js', function (done) {
-
-});
-
-gulp.task('default', ['css', 'js']);
-gulp.task('dev', ['css', 'js']);
+gulp.task('production', ['js', 'css']);
