@@ -25,4 +25,5 @@ gulp.task('css', function (done) {
                .pipe(gulp.dest('public/dist/css/'));
 });
 
+gulp.task('dev', ['js']);
 gulp.task('production', ['js', 'css']);
