@@ -37,7 +37,7 @@ $form.validate({
             success: function (res) {
                 $.unblockUI();
                 if (res.code == 200) {
-                    window.location.href = '/admin/index';
+                    window.location.href = '/admin';
                 } else {
                     $error.empty();
                     $error.append('<i class="fa fa-times-circle-o"></i>' + res.message);

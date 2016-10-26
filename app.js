@@ -2,8 +2,32 @@ var express = require('express');
 var config = require('./config');
 var router = require('./router');
 var nunjucks = require('nunjucks');
+var bodyParser = require('body-parser');
+var cookieParser = require('cookie-parser');
+var session = require('express-session');
+var fileStore = require('session-file-store')(session);
 // var db = require('./db');
 var app = express();
+
+// deal with cookie
+app.use(cookieParser());
+
+// deal with session
+app.use(session({
+    cookie: {path: '/', httpOnly: true, secure: false, maxAge: 86400},
+    name: 'sessionId',
+    secret: 'abcdefghijklmnopqrstuvwxyz',
+    store: new fileStore({
+        path: __dirname + '/data/session',
+        ttl: 3600,
+    }),
+}));
+
+// deal body data
+app.use(bodyParser.json());
+app.use(bodyParser.raw());
+app.use(bodyParser.text());
+app.use(bodyParser.urlencoded({ extended: false })); // for parsing application/x-www-form-urlencoded
 
 app.get('/', function (req, res) {
     res.redirect('/admin/login');
