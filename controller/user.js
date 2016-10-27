@@ -14,10 +14,8 @@ module.exports = {
             return res.json({code: 500, message: 'account or password not match'});
         }
 
-        console.log(accountInfo);
         // 设置登陆态
-        res.session.user = 'tony';
-        // res.session.user = accountInfo;
+        req.session.user = accountInfo;
         return res.json({code: 200, message: 'ok'});
     },
     lists: function () {},

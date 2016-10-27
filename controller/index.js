@@ -7,6 +7,11 @@ var index = {
                 {href: '/admin', title: '首页'}
             ]
         };
+
+        // console.log(req.session.user);
+        // console.log(accountInfo);
+        // console.log(req.session);
+
         res.render('index/index', param);
     },
 };
