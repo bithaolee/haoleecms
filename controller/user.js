@@ -18,6 +18,14 @@ module.exports = {
         req.session.user = accountInfo;
         return res.json({code: 200, message: 'ok'});
     },
+    logout: function (req, res) {
+        req.session.destory(function (err) {
+            if (err) {
+                return res.render('error/500');
+            }
+        });
+        return res.redirect('/admin/login');
+    },
     lists: function () {},
     add: function () {},
     edit: function () {},

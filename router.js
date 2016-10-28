@@ -26,6 +26,7 @@ router.all('*', function (req, res, next) {
 
 router.get('/', index.dashboard);
 router.get('/login', user.login);
+router.get('/logout', user.logout);
 router.post('/user/authentication', user.authentication);
 router.get('/article', article.index);
 router.get('/article/add', article.add);
