@@ -8,6 +8,7 @@ var index = {
             ]
         };
 
+        res.cookie('user', req.session.user);
         // console.log(req.session.user);
         // console.log(accountInfo);
         // console.log(req.session);

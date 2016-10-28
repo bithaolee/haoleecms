@@ -19,7 +19,7 @@ app.use(session({
     secret: 'abcdefghijklmnopqrstuvwxyz',
     store: new fileStore({
         path: __dirname + '/data/session',
-        ttl: 60,
+        ttl: 3600,
     }),
 }));
 
@@ -48,7 +48,7 @@ app.use(express.static('public'));
 
 // 404
 app.use(function (req, res, next) {
-    res.status(404).send('404 not found');
+    res.render('error/404');
 });
 
 // error handler
@@ -62,10 +62,10 @@ app.use(function (err, req, res, next) {
 app.use(function (err, req, res, next) {
     // if is a xml http request
     if (req.xhr) {
-        res.status(500).send('500 internal error');
+        res.json({code: 500, message: err});
     } else {
         // render a page of status 500
-        res.send('shit');
+        res.send('500 ' + err);
     }
 });
 

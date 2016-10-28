@@ -7,7 +7,6 @@ var article = require('./controller/article');
 // user login logic
 router.all('*', function (req, res, next) {
     var user = req.session.user;
-    // console.log(req.path);
     if (req.path !== '/login' && req.path !== '/user/authentication' && user === undefined) {
         if (!req.xhr) {
             return res.redirect('/admin/login');
