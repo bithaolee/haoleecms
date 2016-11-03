@@ -7,8 +7,9 @@ var config = {
         port: 3306,
         user: 'root',
         password: 'root',
-        database: '',
-        charset: 'utf8'
+        database: 'test',
+        connectTimeout: 10000, // 10s
+        // charset: 'utf8'
     }
 };
 

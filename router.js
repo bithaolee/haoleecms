@@ -28,6 +28,7 @@ router.get('/', index.dashboard);
 router.get('/login', user.login);
 router.get('/logout', user.logout);
 router.post('/user/authentication', user.authentication);
+router.get('/user/lists', user.lists);
 router.get('/article', article.index);
 router.get('/article/add', article.add);
 

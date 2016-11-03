@@ -19,14 +19,19 @@ module.exports = {
         return res.json({code: 200, message: 'ok'});
     },
     logout: function (req, res) {
-        req.session.destory(function (err) {
+        req.session.destroy(function (err) {
             if (err) {
                 return res.render('error/500');
             }
         });
         return res.redirect('/admin/login');
     },
-    lists: function () {},
+    lists: function (req, res) {
+        user.userLists(function (err, user) {
+            console.log(user);
+            res.render('user/lists', user);
+        });
+    },
     add: function () {},
     edit: function () {},
     delete: function () {}

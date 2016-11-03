@@ -1,3 +1,5 @@
+var pool = require('../db');
+
 module.exports = function () {
     var accounts = [
         {account: 'lihao@qq.com', password: 'password'},
@@ -5,8 +7,20 @@ module.exports = function () {
     ];
 
     return {
-        userLists: function () {
-            return accounts;
+        userLists: function (callback) {
+            pool.getConnection(function (err, connection) {
+                if (err) {
+                    callback(err);
+                }
+
+                connection.query('select * from user', function (err, rows) {
+                    if (err) {
+                        callback(err);
+                    }
+
+                    callback(undefined, rows);
+                });
+            });
         },
         getUserInfo: function (account) {
             var accountInfo = false;
