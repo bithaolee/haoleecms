@@ -27,9 +27,15 @@ module.exports = {
         return res.redirect('/admin/login');
     },
     lists: function (req, res) {
-        user.userLists(function (err, user) {
-            console.log(user);
-            res.render('user/lists', user);
+        var page = 1;
+        user.userPageLists(page, function (err, paginator) {
+            res.render('user/lists', {
+                title: '用户管理',
+                breadscrumb: [
+                    {href: '/admin/user/lists', title: '用户管理'}
+                ],
+                paginator: paginator
+            });
         });
     },
     add: function () {},

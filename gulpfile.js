@@ -10,20 +10,20 @@ gulp.task('webpack', function () {
     exec('webpack -w');
 });
 
-gulp.task('js', ['webpack'], function () {
-    return gulp.src('public/dist/js/**/*.js')
-               .pipe(uglify())
-               .pipe(md5(5, 'views/**/*.html'))
-               .pipe(gulp.dest('public/dist/js/'));
-});
+// gulp.task('js', ['webpack'], function () {
+//     return gulp.src('public/dist/js/**/*.js')
+//                .pipe(uglify())
+//                .pipe(md5(5, 'views/**/*.html'))
+//                .pipe(gulp.dest('public/dist/js/'));
+// });
 
-gulp.task('css', function (done) {
-    return gulp.src(['public/source/css/**/*.css', 'public/source/css/**/*.less'], {base: 'public'})
-               .pipe(less())
-               .pipe(cssmin())
-               .pipe(md5(5, 'views/**/*.html'))
-               .pipe(gulp.dest('public/dist/css/'));
-});
+// gulp.task('css', function (done) {
+//     return gulp.src(['public/source/css/**/*.css', 'public/source/css/**/*.less'], {base: 'public'})
+//                .pipe(less())
+//                .pipe(cssmin())
+//                .pipe(md5(5, 'views/**/*.html'))
+//                .pipe(gulp.dest('public/dist/css/'));
+// });
 
-gulp.task('dev', ['js']);
+gulp.task('dev', ['webpack']);
 gulp.task('production', ['js', 'css']);

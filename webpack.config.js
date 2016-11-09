@@ -51,6 +51,7 @@ module.exports = {
             blockui: libsDir + "/jQueryBlockUI/jquery.blockui.min.js",
             jqueryform: libsDir + "/jQueryForm/jquery.form.min.js",
             jqueryvalidate: libsDir + '/jqueryValidator/dist/jquery.validate.min.js',
+            dataTables: libsDir + '/datatables/dataTables.bootstrap.min.js',
         }
     },
     externals: {}, // 定义外部引用的资源，可以直接使用

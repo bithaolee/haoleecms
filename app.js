@@ -19,7 +19,7 @@ app.use(session({
     secret: 'abcdefghijklmnopqrstuvwxyz',
     store: new fileStore({
         path: __dirname + '/data/session',
-        ttl: 3600,
+        ttl: 36000,
     }),
 }));
 
