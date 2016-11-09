@@ -19,6 +19,7 @@ router.all('*', function (req, res, next) {
         return res.redirect('/admin');
     }
 
+    res.locals.path = req.path;
     // res.locals.xxx = xxx; // 保存views的上下文，可在views中直接使用
     next();
 });
