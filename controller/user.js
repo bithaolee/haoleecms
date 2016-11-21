@@ -28,7 +28,7 @@ module.exports = {
     },
     lists: function (req, res) {
         var page = 1;
-        user.userPageLists(page, function (err, paginator) {
+        user.userPageLists(page).then(function (paginator) {
             res.render('user/lists', {
                 title: '用户管理',
                 breadscrumb: [

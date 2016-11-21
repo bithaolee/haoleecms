@@ -1,4 +1,5 @@
-var pool = require('../db');
+var db = require('../db');
+var Promise = require('bluebird');
 
 module.exports = function () {
     var accounts = [
@@ -7,46 +8,25 @@ module.exports = function () {
     ];
 
     return {
-        userPageLists: function (page, callback, limit) {
+        userPageLists: function (page, limit) {
             limit = limit === undefined ? 15 : parseInt(limit);
             page = page <= 0 ? 1 : parseInt(page);
 
-            pool.getConnection(function (err, connection) {
-                if (err) {
-                    callback(err);
-                }
-
-                connection.query('select count(*) as sum from user', function (err, count) {
-                    if (err) {
-                        callback(err);
-                    }
-                    var sum = count.pop().sum;
-                    connection.query('select * from user limit ' + (page - 1) * limit + ',' + limit, function (err, rows) {
+            return Promise.using(db(), function (connection) {
+                var queryCount = connection.queryAsync('select count(*) as sum from user');
+                var queryRecords = connection.queryAsync('select * from user limit ' + (page - 1) * limit + ',' + limit);
+                return Promise.all([queryCount, queryRecords])
+                    .then(function (taskResult) {
+                        var sum = taskResult[0].pop().sum;
                         var paginator = {
                             'pages': Math.ceil(sum / limit),
                             'current': page,
                             'count': sum,
-                            'records': rows,
+                            'records': taskResult[1],
                         };
 
-                        callback(undefined, paginator);
+                        return paginator;
                     });
-                });
-            });
-        },
-        userLists: function (callback) {
-            pool.getConnection(function (err, connection) {
-                if (err) {
-                    callback(err);
-                }
-
-                connection.query('select * from user', function (err, rows) {
-                    if (err) {
-                        callback(err);
-                    }
-
-                    callback(undefined, rows);
-                });
             });
         },
         getUserInfo: function (account) {
