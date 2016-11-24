@@ -6,8 +6,10 @@ var bodyParser = require('body-parser');
 var cookieParser = require('cookie-parser');
 var session = require('express-session');
 var fileStore = require('session-file-store')(session);
+
 // var db = require('./db');
 var app = express();
+var io = require('socket.io')(app);
 
 // deal with cookie
 app.use(cookieParser());
@@ -78,3 +80,13 @@ var server = app.listen(config.port, function (err) {
         console.log('app listening at http://%s:%s', address.host, address.port);
     }
 });
+
+// deal with websocket request
+io.on('connection', function (socket) {
+  socket.emit('news', { hello: 'world' });
+  socket.on('my other event', function (data) {
+    console.log(data);
+  });
+});
+
+module.exports = app;

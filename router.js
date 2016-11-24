@@ -3,6 +3,7 @@ var router = express.Router();
 var index = require('./controller/index');
 var user = require('./controller/user');
 var article = require('./controller/article');
+var chat = require('./controller/chat');
 
 // user login logic
 router.all('*', function (req, res, next) {
@@ -32,6 +33,7 @@ router.post('/user/authentication', user.authentication);
 router.get('/user/lists', user.lists);
 router.get('/article', article.index);
 router.get('/article/add', article.add);
+router.get('/chat/index', chat.index);
 
 module.exports = router;
 
