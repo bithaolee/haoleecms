@@ -37,7 +37,6 @@
     "nunjucks": "^2.5.2",
     "session-file-store": "^0.2.2",
     "socket.io": "^1.6.0",
-    "socketio": "^1.0.0",
     "webpack": "^1.13.2"
   }
 }

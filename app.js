@@ -6,7 +6,9 @@ var bodyParser = require('body-parser');
 var cookieParser = require('cookie-parser');
 var parserHeaderCookie = require('express/node_modules/cookie').parse;
 var Session = require('express-session');
-var fileStore = require('session-file-store')(Session);
+var FileStore = require('session-file-store')(Session);
+// 需要解密sessionId
+var signature = require('cookie-signature');
 var http = require('http');
 
 // var db = require('./db');
@@ -14,18 +16,23 @@ var app = express();
 var server = http.Server(app);
 var io = require('socket.io')(server);
 
+var secret = 'abcdefghijklmnopqrstuvwxyz';
+
 // deal with cookie
 app.use(cookieParser());
+
+fileStore = new FileStore({
+    path: __dirname + '/data/session',
+    ttl: 3600000,
+});
 
 var session = Session({
     cookie: {path: '/', httpOnly: true, secure: false, maxAge: 86400},
     name: 'sessionId',
-    secret: 'abcdefghijklmnopqrstuvwxyz',
-    store: new fileStore({
-        path: __dirname + '/data/session',
-        ttl: 3600000,
-    }),
+    secret: secret,
+    store: fileStore,
 });
+
 // deal with session
 app.use(session);
 
@@ -85,48 +92,55 @@ server.listen(config.port, function (err) {
     }
 });
 
-// authentication
-io.set('authorization', function (handSharkData, accept) {
-    (function (handSharkData) {
-        if (!handSharkData.headers.cookie) {
-            return accept('No cookie transmitted!', false);
-        }
-
-        handSharkData.cookie = parserHeaderCookie(handSharkData.headers.cookie);
-        if (!handSharkData.cookie.sessionId) {
-            return accept('No sessionId!', false);
-        }
-
-        // TODO
-        fileStore.get(handSharkData.cookie.sessionId, function (err, session) {
-            console.log(session);
-        });
-        // console.log(handSharkData.cookie);
-        return accept('pass', true);
-    })(handSharkData);
-});
-
 var onlineNumber = 0;
-// deal with websocket request
-io.on('connection', function (socket) {
-    onlineNumber ++;
-    var req = socket.request;
-    // join a room
-    socket.join('group_chat');
 
-    socket.on('chat', function (data) {
-        console.log(req.headers);
-        // console.log(req);
-        // sending message to this group chat
-        // io.to('group_chat').emit('chat', {user: req.session.user, data: data});
-    });
+io.use(function (socket, next) {
+    console.log('@');
+    if (!socket.request.headers.cookie) {
+        return next(new Error('No cookie transmitted!'));
+    }
 
-    socket.on('disconnect', function () {
-        onlineNumber --;
-        // leave group chat room
-        socket.leave('group_chat');
+    var cookies = parserHeaderCookie(socket.request.headers.cookie);
+    if (!cookies.sessionId) {
+        return next(new Error('No sessionId!'));
+    }
+
+    // 解密sessionId
+    var sessionId = (0 === cookies.sessionId.indexOf('s:')) ?
+            signature.unsign(cookies.sessionId.slice(2), secret):
+            cookies.sessionId;
+
+    fileStore.get(sessionId, function (err, session) {
+        if (err || !session || !session.user) {
+            console.log(session);
+            console.log(err);
+            return next(new Error(err));
+        }
+
+        // deal with websocket request
+        io.sockets.on('connection', function (socket) {
+            var req = socket.request;
+
+            onlineNumber ++;
+            // join a room
+            socket.join('group_chat');
+
+            socket.on('chat', function (data) {
+                // sending message to this group chat
+                io.to('group_chat').emit('chat', {user: session.user.account, data: data});
+            });
+
+            socket.on('disconnect', function () {
+                onlineNumber --;
+                // leave group chat room
+                socket.leave('group_chat');
+                console.log('在线总人数：' + onlineNumber);
+            });
+            console.log('在线总人数：' + onlineNumber);
+        });
+
+        next();
     });
-    console.log('在线总人数：' + onlineNumber);
 });
 
 module.exports = app;

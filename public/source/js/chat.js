@@ -3,6 +3,7 @@ var socket = io.connect('http://localhost:3000');
 var $messageBox = $('.direct-chat-messages');
 var $form = $('.input-group');
 var $btnSend = $form.find('.btn-send');
+var account = $btnSend.data('account');
 var $message = $form.find('input[name="message"]');
 
 function wrapMessage(message, isSelf) {
@@ -43,5 +44,9 @@ $btnSend.on('click', function (e) {
 });
 
 socket.on('chat', function (data) {
-    $messageBox.append(wrapMessage(data));
+    console.log(account);
+    console.log(data);
+    if (data.user !== account) {
+        $messageBox.append(wrapMessage(data.data));
+    }
 });
