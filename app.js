@@ -4,11 +4,9 @@ var router = require('./router');
 var nunjucks = require('nunjucks');
 var bodyParser = require('body-parser');
 var cookieParser = require('cookie-parser');
-var parserHeaderCookie = require('express/node_modules/cookie').parse;
 var Session = require('express-session');
 var FileStore = require('session-file-store')(Session);
-// 需要解密sessionId
-var signature = require('cookie-signature');
+var getSessionFromCookie = require('./utils/get_session_from_cookie');
 var http = require('http');
 
 // var db = require('./db');
@@ -95,52 +93,47 @@ server.listen(config.port, function (err) {
 var onlineNumber = 0;
 
 io.use(function (socket, next) {
-    console.log('@');
     if (!socket.request.headers.cookie) {
         return next(new Error('No cookie transmitted!'));
     }
 
-    var cookies = parserHeaderCookie(socket.request.headers.cookie);
-    if (!cookies.sessionId) {
-        return next(new Error('No sessionId!'));
-    }
-
-    // 解密sessionId
-    var sessionId = (0 === cookies.sessionId.indexOf('s:')) ?
-            signature.unsign(cookies.sessionId.slice(2), secret):
-            cookies.sessionId;
-
-    fileStore.get(sessionId, function (err, session) {
-        if (err || !session || !session.user) {
-            console.log(session);
-            console.log(err);
+    getSessionFromCookie(socket.request.headers.cookie, secret, function (err, session) {
+        if (err) {
             return next(new Error(err));
         }
 
-        // deal with websocket request
-        io.sockets.on('connection', function (socket) {
-            var req = socket.request;
-
-            onlineNumber ++;
-            // join a room
-            socket.join('group_chat');
-
-            socket.on('chat', function (data) {
-                // sending message to this group chat
-                io.to('group_chat').emit('chat', {user: session.user.account, data: data});
-            });
-
-            socket.on('disconnect', function () {
-                onlineNumber --;
-                // leave group chat room
-                socket.leave('group_chat');
-                console.log('在线总人数：' + onlineNumber);
-            });
-            console.log('在线总人数：' + onlineNumber);
-        });
-
         next();
     });
+});
+
+// deal with websocket request
+io.sockets.on('connection', function (socket) {
+    var req = socket.request;
+
+    onlineNumber ++;
+    // retrive session
+    getSessionFromCookie(req.headers.cookie, secret, function (err, session) {
+        if (err) {
+            console.log('获取用户信息失败');
+            return;
+        }
+
+        socket.on('chat', function (data) {
+            // sending message to this group chat
+            io.to('group_chat').emit('chat', {user: session.user.account, data: data});
+        });
+    });
+
+    // join a room
+    socket.join('group_chat');
+
+    socket.on('disconnect', function () {
+        onlineNumber --;
+        // leave group chat room
+        socket.leave('group_chat');
+        console.log('在线总人数：' + onlineNumber);
+    });
+    console.log('在线总人数：' + onlineNumber);
 });
 
 module.exports = app;
