@@ -9,12 +9,11 @@ var FileStore = require('session-file-store')(Session);
 var getSessionFromCookie = require('./utils/get_session_from_cookie');
 var http = require('http');
 
-// var db = require('./db');
 var app = express();
 var server = http.Server(app);
 var io = require('socket.io')(server);
 
-var secret = 'abcdefghijklmnopqrstuvwxyz';
+var secret = 'abcdefghijklmnopqrstuvwxyz'; // session secret
 
 // deal with cookie
 app.use(cookieParser());
@@ -120,7 +119,7 @@ io.sockets.on('connection', function (socket) {
 
         socket.on('chat', function (data) {
             // sending message to this group chat
-            io.to('group_chat').emit('chat', {user: session.user.account, data: data});
+            socket.broadcast.to('group_chat').emit('chat', {user: session.user.account, data: data});
         });
     });
 

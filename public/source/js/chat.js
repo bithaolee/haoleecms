@@ -6,10 +6,10 @@ var $btnSend = $form.find('.btn-send');
 var account = $btnSend.data('account');
 var $message = $form.find('input[name="message"]');
 
-function wrapMessage(message, isSelf) {
+function wrapMessage(message, user, isSelf) {
     var messageTemp = '<div class="direct-chat-msg {{class}}">\
         <div class="direct-chat-info clearfix">\
-          <span class="direct-chat-name pull-right">anonymous</span>\
+          <span class="direct-chat-name pull-right">{{user}}</span>\
           <span class="direct-chat-timestamp pull-left">{{time}}</span>\
         </div>\
         <img class="direct-chat-img" src="/libs/admin/img/user2-160x160.jpg" alt="Message User Image">\
@@ -21,14 +21,17 @@ function wrapMessage(message, isSelf) {
     messageTemp = messageTemp.replace('{{class}}', className);
     messageTemp = messageTemp.replace('{{time}}', new Date());
     messageTemp = messageTemp.replace('{{message}}', message);
+    messageTemp = messageTemp.replace('{{user}}', user);
     return messageTemp;
 }
 
 function submitMessage() {
     var message = $message.val();
     if (message !== '') {
-        $messageBox.append(wrapMessage(message, true));
+        $messageBox.append(wrapMessage(message, account, true));
+        $messageBox.animate({scrollTop:$messageBox.get(0).scrollHeight}, 300);
         socket.emit('chat', message);
+        $message.val('');
     }
 }
 
@@ -44,9 +47,6 @@ $btnSend.on('click', function (e) {
 });
 
 socket.on('chat', function (data) {
-    console.log(account);
-    console.log(data);
-    if (data.user !== account) {
-        $messageBox.append(wrapMessage(data.data));
-    }
+    $messageBox.append(wrapMessage(data.data, data.user, data.user === account));
+    $messageBox.animate({scrollTop:$messageBox.get(0).scrollHeight}, 300);
 });
